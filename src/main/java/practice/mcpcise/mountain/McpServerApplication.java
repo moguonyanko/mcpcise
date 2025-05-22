@@ -1,4 +1,4 @@
-package practice.mcpcise;
+package practice.mcpcise.mountain;
 
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.method.MethodToolCallbackProvider;
@@ -14,7 +14,7 @@ public class McpServerApplication {
     }
 
     @Bean
-    public ToolCallbackProvider weatherTools(MountainService weatherService) {
-        return MethodToolCallbackProvider.builder().toolObjects(weatherService).build();
+    public ToolCallbackProvider weatherTools(MountainService mountainService) {
+        return MethodToolCallbackProvider.builder().toolObjects(mountainService).build();
     }
 }

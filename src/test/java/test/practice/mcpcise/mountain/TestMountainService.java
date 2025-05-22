@@ -1,8 +1,9 @@
-package test.practice.mcpcise;
+package test.practice.mcpcise.mountain;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import practice.mcpcise.MountainService;
+
+import practice.mcpcise.mountain.MountainService;
 
 public class TestMountainService {
 
@@ -10,10 +11,10 @@ public class TestMountainService {
    * 山の一覧を取得するテスト
    */
   @Test
-  void testGetMountainList() {
+  void testGetDefaultMountainList() {
     var mountainService = new MountainService();
-    var result = mountainService.getMountainList(5, "desc");
+    var result = mountainService.getDefaultMountainList();
     assertNotNull(result);
-    assertTrue(result.contains("槍ヶ岳"));
+    assertFalse(result.isEmpty());
   }  
 }
