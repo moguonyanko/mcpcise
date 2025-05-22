@@ -45,10 +45,12 @@ public class MountainService {
         /**
          * 指定した標高で絞り込んでから特定の数だけ山を抽出することがmountixのAPIでできないため、
          * まずは全ての山を取得してから、JavaのStreamAPIで絞り込むようにしています。
+         * 並べ替えの順序が指定されていない場合は降順で取得します。
          */
         var mountainsList = restClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .queryParam("sort", "elevation." + sortType)
+                        .queryParam("sort", 
+                                "elevation." + (sortType == null || sortType.isEmpty() ? "desc" : sortType))
                         .build())
                 .retrieve()
                 .body(MountainList.class);
