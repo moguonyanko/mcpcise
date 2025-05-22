@@ -17,4 +17,14 @@ public class TestMountainService {
     assertNotNull(result);
     assertFalse(result.isEmpty());
   }  
+
+  @Test
+  void testGetMountainList() {
+    var mountainService = new MountainService();
+    var result = mountainService.getMountainList(5, "desc", 1000, "<=");
+    assertNotNull(result);
+    assertFalse(result.isEmpty());
+    assertTrue(result.size() == 5);
+  }  
+
 }

@@ -40,26 +40,31 @@ public class MountainService {
             @ToolParam(description = "取得する山の数") int limit,
             @ToolParam(description = "並べ替えの順序。descで降順、ascで昇順") String sortType,
             @ToolParam(description = "山の一覧を絞り込むための標高") int elevation,
-            @ToolParam(description = "標高の絞り込み方を指定するための演算子。<、>、=、≦、≧が指定できます。左辺が比較対象のMountain、右辺がelevationパラメータです。") String operator
+            @ToolParam(description = "標高の絞り込み方を指定するための演算子。<、>、=、<=、>=が指定できます。左辺が比較対象のMountain、右辺がelevationパラメータです。") String operator
     ) {
+        /**
+         * 指定した標高で絞り込んでから特定の数だけ山を抽出することがmountixのAPIでできないため、
+         * まずは全ての山を取得してから、JavaのStreamAPIで絞り込むようにしています。
+         */
         var mountainsList = restClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .queryParam("offset", "0")
-                        .queryParam("limit", String.valueOf(limit))
+                        // .queryParam("offset", "0")
+                        // .queryParam("limit", String.valueOf(limit))
                         .queryParam("sort", "elevation." + sortType)
                         .build())
                 .retrieve()
                 .body(MountainList.class);
         
-        MountainOperator mountainOperator;
+        MountainOperator elevationOperator;
         if (elevation >= 0 && operator != null) {
-            mountainOperator = new MountainOperator(elevation, operator);
+            elevationOperator = new ElevationOperator(elevation, operator);
         } else {
-            mountainOperator = new NullMountainOperator();
+            elevationOperator = new DefaultMountainOperator();
         }
 
         var mountains = mountainsList.mountains().stream()
-                .filter(mountain -> mountainOperator.compare(mountain.elevation()))
+                .filter(elevationOperator::operate)
+                .limit(limit)
                 .collect(Collectors.toList());
 
         return new MountainList(mountains);
