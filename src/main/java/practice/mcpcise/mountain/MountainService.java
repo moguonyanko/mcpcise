@@ -1,5 +1,7 @@
 package practice.mcpcise.mountain;
 
+import java.util.Collections;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.ai.tool.annotation.Tool;
@@ -28,7 +30,7 @@ public class MountainService {
      */
     @Tool(description = "山の一覧を規定の設定で返します。規定の設定は山を10個、標高で降順に並べて返すものです。")
     public MountainList getDefaultMountainList() {
-        return this.getMountainList(10, "desc", -1, null);
+        return this.getMountainList(10, Collections.emptySet(), "desc", -1, null);
     }
 
     /**
@@ -37,10 +39,11 @@ public class MountainService {
      */
     @Tool(description = "山の一覧を返します。標高で降順にソートされます。")
     public MountainList getMountainList(
-            @ToolParam(description = "取得する山の数") int limit,
-            @ToolParam(description = "並べ替えの順序。descで降順、ascで昇順") String sortType,
-            @ToolParam(description = "山の一覧を絞り込むための標高") int elevation,
-            @ToolParam(description = "標高の絞り込み方を指定するための演算子。<、>、=、<=、>=が指定できます。左辺が比較対象のMountain、右辺がelevationパラメータです。") String operator
+            @ToolParam(description = "取得する山の数です。") int limit,
+            @ToolParam(description = "山が属する都道府県。山梨県と静岡県にまたがる山であれば[\"山梨県\",\"静岡県\"]となる。") Set<String> prefectures,
+            @ToolParam(description = "並べ替えの順序。descで降順、ascで昇順を指します。") String sortType,
+            @ToolParam(description = "山を絞り込む際の基準となる標高値です。") int elevation,
+            @ToolParam(description = "標高で山を絞り込む際の方法を指す演算子です。<、>、=、<=、>=が指定できます。左辺が比較対象のMountainオブジェクト、右辺がelevationパラメータです。") String operator
     ) {
         /**
          * 指定した標高で絞り込んでから特定の数だけ山を抽出することがmountixのAPIでできないため、
@@ -62,7 +65,10 @@ public class MountainService {
             elevationOperator = new DefaultMountainOperator();
         }
 
+        var prefecturesFilter = new PrefecturesFilter(prefectures);
+
         var mountains = mountainsList.mountains().stream()
+                .filter(prefecturesFilter::accept)
                 .filter(elevationOperator::operate)
                 .limit(limit)
                 .collect(Collectors.toList());
