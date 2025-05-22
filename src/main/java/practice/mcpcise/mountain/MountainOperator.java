@@ -8,5 +8,7 @@ interface MountainOperator {
      * @param mountain 山の情報
      * @return true: 操作成功, false: 操作失敗
      */
-    boolean operate(Mountain mountain);
+    default boolean operate(Mountain mountain) {
+        return true;
+    }
 }

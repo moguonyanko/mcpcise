@@ -48,8 +48,6 @@ public class MountainService {
          */
         var mountainsList = restClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        // .queryParam("offset", "0")
-                        // .queryParam("limit", String.valueOf(limit))
                         .queryParam("sort", "elevation." + sortType)
                         .build())
                 .retrieve()
