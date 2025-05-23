@@ -9,6 +9,15 @@ import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+/**
+ * 山の情報を取得するためのサービスクラスです。
+ * このクラスは、mountixのAPIを使用して山の情報を取得します。
+ * 
+ * # 参考サイト
+ * https://modelcontextprotocol.io/quickstart/server#java
+ * https://www.baeldung.com/spring-boot-restclient
+ * https://dottrail.codemountains.org/lp/mountix-api/
+ */
 @Service
 public class MountainService {
 
